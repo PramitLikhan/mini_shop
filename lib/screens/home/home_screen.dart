@@ -1,89 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mini_shop/providers/cart_provider.dart';
+import 'package:mini_shop/models/product.dart';
 import 'package:mini_shop/providers/products_provider.dart';
 
+import '../../shared/add_to_cart_button.dart';
 import '../../shared/cart_icon.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final allProducts = ref.watch(productsProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Garage Sale Products'),
-        actions: const [CartIcon()],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: LayoutBuilder(
-          builder: (context, constraints) => GridView.builder(
-            itemCount: allProducts.length,
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: constraints.maxWidth / 4,
-              childAspectRatio: 1,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-            ),
-            itemBuilder: (context, index) => ProductWidget(
-              index: index,
-            ),
-          ),
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Garage Sale Products'),
+          actions: const [CartIcon()],
         ),
-      ),
+        body: const Padding(
+          padding: EdgeInsets.all(20),
+          child: ProductGrid(), // stateless container
+        ),
+      );
+}
+
+class ProductGrid extends ConsumerWidget {
+  const ProductGrid({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final products = ref.watch(productsProvider);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = (constraints.maxWidth ~/ 200).clamp(1, 4);
+        return GridView.builder(
+          itemCount: products.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: 1,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+          ),
+          itemBuilder: (_, i) => ProductWidget(product: products[i]),
+        );
+      },
     );
   }
 }
 
-class ProductWidget extends ConsumerWidget {
+class ProductWidget extends StatelessWidget {
   const ProductWidget({
-    required this.index,
+    required this.product,
     super.key,
   });
 
-  final int index;
+  final Product product;
 
   @override
-  Widget build(BuildContext context, ref) {
-    final cartProducts = ref.watch(cartNotifierProvider);
-    final allProducts = ref.watch(productsProvider);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      color: Colors.blueGrey.withOpacity(0.05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            allProducts[index].image,
-            height: 60,
-            width: 60,
+  Widget build(BuildContext context) => Card(
+        elevation: 5,
+        color: Colors.grey.shade100,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image.asset(product.image, height: 60, width: 60),
+              RepaintBoundary(child: Text('${product.title} \$${product.price}')),
+              AddToCartButton(product: product),
+            ],
           ),
-          Text(allProducts[index].title),
-          Text('\$${allProducts[index].price}'),
-          if (cartProducts.contains(allProducts[index]))
-            TextButton(
-              onPressed: () => ref
-                  .read(
-                    cartNotifierProvider.notifier,
-                  )
-                  .removeProduct(allProducts[index]),
-              child: const Text('Remove'),
-            ),
-          if (!(cartProducts.contains(allProducts[index])))
-            TextButton(
-              onPressed: () => ref
-                  .read(
-                    cartNotifierProvider.notifier,
-                  )
-                  .addProduct(allProducts[index]),
-              child: const Text('Add to Cart'),
-            )
-        ],
-      ),
-    );
-  }
+        ),
+      );
 }
