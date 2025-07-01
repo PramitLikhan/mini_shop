@@ -19,8 +19,8 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: LayoutBuilder(builder: (context, constraints) {
-          return GridView.builder(
+        child: LayoutBuilder(
+          builder: (context, constraints) => GridView.builder(
             itemCount: allProducts.length,
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: constraints.maxWidth / 4,
@@ -28,17 +28,19 @@ class HomeScreen extends ConsumerWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
             ),
-            itemBuilder: (context, index) => ProductWidget(index),
-          );
-        }),
+            itemBuilder: (context, index) => ProductWidget(
+              index: index,
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
 class ProductWidget extends ConsumerWidget {
-  const ProductWidget(
-    this.index, {
+  const ProductWidget({
+    required this.index,
     super.key,
   });
 

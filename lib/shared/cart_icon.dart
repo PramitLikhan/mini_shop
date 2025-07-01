@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mini_shop/providers/cart_provider.dart';
-
-import '../screens/cart/cart_screen.dart';
+import 'package:mini_shop/router/app_pages.dart';
 
 class CartIcon extends ConsumerWidget {
   const CartIcon({super.key});
@@ -13,7 +13,7 @@ class CartIcon extends ConsumerWidget {
     return Stack(
       children: [
         IconButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CartScreen())),
+          onPressed: () => context.push(AppPages.cart),
           icon: const Icon(Icons.shopping_bag_outlined),
         ),
         Positioned(

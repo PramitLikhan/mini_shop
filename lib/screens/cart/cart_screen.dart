@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mini_shop/providers/cart_provider.dart';
 
+import '../../models/product.dart' show Product;
+
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
 
@@ -27,30 +29,40 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         child: Column(
           children: [
             Column(
-              children: cartProducts
-                  .map(
-                    (e) => Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        children: [
-                          Image.asset(e.image, height: 60, width: 60),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(e.title),
-                          Spacer(),
-                          Text(e.price.toString()),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(), // output cart products here
+              children: cartProducts.map((e) => CartProduct(product: e)).toList(),
             ),
-
-            // output totals here
             Text('Total: $total'),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CartProduct extends ConsumerWidget {
+  const CartProduct({
+    super.key,
+    required this.product,
+  });
+  final Product product;
+  @override
+  Widget build(BuildContext context, ref) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          Image.asset(product.image, height: 60, width: 60),
+          SizedBox(
+            width: 10,
+          ),
+          Text(product.title),
+          Spacer(),
+          Text(product.price.toString()),
+          TextButton(
+            onPressed: () => ref.read(cartNotifierProvider.notifier).removeProduct(product),
+            child: Text('Remove'),
+          )
+        ],
       ),
     );
   }
