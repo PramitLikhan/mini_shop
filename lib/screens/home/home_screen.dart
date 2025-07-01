@@ -30,7 +30,7 @@ class ProductGrid extends ConsumerWidget {
     final products = ref.watch(productsProvider);
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount = (constraints.maxWidth ~/ 200).clamp(1, 4);
+        final crossAxisCount = (constraints.maxWidth ~/ 200).clamp(1, 8);
         return GridView.builder(
           itemCount: products.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

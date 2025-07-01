@@ -51,8 +51,9 @@ class CartList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final cartProducts = ref.watch(cartNotifierProvider);
-    return Column(
-      children: cartProducts.map((e) => CartProduct(product: e)).toList(),
+    return ListView.builder(
+      itemCount: cartProducts.length,
+      itemBuilder: (_, index) => CartProduct(product: cartProducts.elementAt(index)),
     );
   }
 }
@@ -64,18 +65,23 @@ class CartProduct extends ConsumerWidget {
   });
   final Product product;
   @override
-  Widget build(BuildContext context, ref) => Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: [
-            Image.asset(product.image, height: 60, width: 60),
-            SizedBox(width: 10),
-            Text(product.title),
-            Spacer(),
-            Text(product.price.toString()),
-            SizedBox(width: 10),
-            AddToCartButton(product: product),
-          ],
+  Widget build(BuildContext context, ref) => Card(
+        elevation: 5,
+        color: Colors.grey.shade100,
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Image.asset(product.image, height: 60, width: 60),
+              SizedBox(width: 10),
+              Text(product.title),
+              Spacer(),
+              Text("\$${product.price.toString()}"),
+              SizedBox(width: 10),
+              AddToCartButton(product: product),
+            ],
+          ),
         ),
       );
 }
